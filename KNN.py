@@ -110,6 +110,7 @@ draw_line()
 bestK = np.int(ACCs[np.argmax(ACCs[:,1])][0]) #K that produce max accuracy
 
 print("The best K found is ",bestK)
+print("The accuracy on  the validation set with K="+str(bestK)+" is "+'{:.2%}'.format(np.max(ACCs[:,1])))
 
 clf = neighbors.KNeighborsClassifier(bestK, weights=weight) 
 clf.fit(X_train, y_train)
