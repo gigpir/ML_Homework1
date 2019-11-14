@@ -15,13 +15,15 @@ weight="uniform"
 
 Xsel=X[:,:2] #make a selection of the first 2 coloumns
 
-#Preprocessing: standardize the set
-scaler=StandardScaler()
-scaler.fit(Xsel)
-Xsel = scaler.transform(Xsel)
+
 
 #build train validation and test in proportion 5:2:3
 X_train, X_test, y_train, y_test = train_test_split(Xsel, y, test_size=0.3, random_state=1)
+
+#Preprocessing: standardize the Train+Val set
+scaler=StandardScaler()
+scaler.fit(X_train)
+X_train = scaler.transform(X_train)
 X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=2/7, random_state=1)
 
 for n_neighbors in [1,3,5,7]:
@@ -94,7 +96,7 @@ def draw_line():
     plt.ylabel("Accuracy", fontsize=10)
     #set axis dimensions
     plt.xlim(0, 9)
-    plt.ylim(0.4, 1)
+    plt.ylim(0.5, 1)
     
     # Set the x, y axis tick marks text size.
     plt.tick_params(axis='both', labelsize=9)
@@ -102,8 +104,8 @@ def draw_line():
     # Display the plot in the matplotlib's viewer.
     plt.show()
 
-if __name__ == '__main__':
-    draw_line()
+
+draw_line()
 
 bestK = np.int(ACCs[np.argmax(ACCs[:,1])][0]) #K that produce max accuracy
 
@@ -119,8 +121,8 @@ cmap_bold = ListedColormap(['#FF0000', '#00FF00', '#0000FF'])
 # Plot the decision boundary. For that, we will assign a color to each
 # point in the mesh [x_min, x_max]x[y_min, y_max].
 h = .02  # step size in the mesh
-x_min, x_max = Xsel[:, 0].min() - 1, Xsel[:, 0].max() + 1
-y_min, y_max = Xsel[:, 1].min() - 1, Xsel[:, 1].max() + 1
+x_min, x_max = X_train[:, 0].min() - 1, X_train[:, 0].max() + 1
+y_min, y_max = X_train[:, 1].min() - 1, X_train[:, 1].max() + 1
 xx, yy = np.meshgrid(np.arange(x_min, x_max, h),np.arange(y_min, y_max, h))
 Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
 
@@ -128,21 +130,24 @@ Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
 Z = Z.reshape(xx.shape)
 plt.figure()
 plt.pcolormesh(xx, yy, Z, cmap=cmap_light)
-
-# Plot also the training points
-plt.scatter(Xsel[:, 0], Xsel[:, 1], c=y, cmap=cmap_bold,edgecolor='k', s=20)
+#NORMALIZE TEST SET ACCORDING TO THE PREVIOUS SCALER based on Train+Val set
+X_test = scaler.transform(X_test)
+# Plot also the test points
+plt.scatter(X_test[:, 0], X_test[:, 1], c=y_test, cmap=cmap_bold,edgecolor='k', s=20)
 plt.xlim(xx.min(), xx.max())
 plt.ylim(yy.min(), yy.max())
-plt.title("3-Class classification (k = %i, weights = '%s')" % (bestK, weight),fontsize=16)
-    
+plt.title("KNN with best k (k = %i, weights = '%s')" % (bestK, weight),fontsize=16)
+
+
 # Evaluate the method on the test set
 pred_test = clf.predict(X_test)
     
 #Prepare the "subtitle"
 #subtitle="Prediction accuracy for the test dataset with k="+str(n_neighbors)
 acc=metrics.accuracy_score(y_test, pred_test)
-subtitle='\nAccuracy='+'{:.2%}'.format(acc)
+out='\nThe accuracy on the test set with the best K is '+'{:.2%}'.format(acc)
     
-plt.xlabel(subtitle, fontsize=12)
+#plt.xlabel(out, fontsize=12)
     
 plt.show()
+print(out)
