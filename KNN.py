@@ -96,7 +96,7 @@ def draw_line():
     plt.ylabel("Accuracy", fontsize=10)
     #set axis dimensions
     plt.xlim(0, 9)
-    plt.ylim(0.5, 1)
+    plt.ylim(0.6, 1)
     
     # Set the x, y axis tick marks text size.
     plt.tick_params(axis='both', labelsize=9)
