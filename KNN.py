@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-from sklearn.preprocessing import StandardScaler	
+from sklearn.preprocessing import StandardScaler
 import numpy as np
 import sklearn
 from sklearn.datasets import load_wine
 from sklearn.model_selection import train_test_split
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from sklearn import neighbors
@@ -60,9 +61,11 @@ for n_neighbors in [1,3,5,7]:
     #subtitle='\nAccuracy='+'{:.2%}'.format(acc)
     
     #plt.xlabel(subtitle, fontsize=12)
-    
+
+    plt.savefig('KNN_plot_k'+str(n_neighbors)+'.png')
+
     plt.show()
-    
+
     if(n_neighbors==1):
         ACCs=[n_neighbors, acc]
     else:
@@ -99,6 +102,7 @@ def draw_line():
     # Set the x, y axis tick marks text size.
     plt.tick_params(axis='both', labelsize=9)
 
+    plt.savefig('KNN-accuracy_validation_set.png')
     # Display the plot in the matplotlib's viewer.
     plt.show()
 
@@ -144,5 +148,5 @@ acc=metrics.accuracy_score(y_test, pred_test)
 subtitle='\nAccuracy='+'{:.2%}'.format(acc)
     
 plt.xlabel(subtitle, fontsize=12)
-    
+plt.savefig('KNN-plot_bestK.png')
 plt.show()
