@@ -42,7 +42,7 @@ def make_meshgrid(x, y, h=.02):
 
 
 # Plot a line based on the x and y axis value list.
-def draw_line():
+def draw_line(plotName):
     # List to hold x values.
     x_number_values = ACCs[:, 0]
 
@@ -56,7 +56,7 @@ def draw_line():
     plt.plot(x_number_values, y_number_values, linewidth=3)
 
     # Set the line chart title and the text font size.
-    plt.title("Accuracy on validation set", fontsize=16)
+    plt.title(plotName+" accuracy on validation set", fontsize=16)
 
     # Set x axes label.
     plt.xlabel("C value", fontsize=10)
@@ -64,12 +64,13 @@ def draw_line():
     # Set y axes label.
     plt.ylabel("Accuracy", fontsize=10)
     # set axis dimensions
-    plt.xlim(0.001, 2000)
-    plt.ylim(0.4, 1)
+    plt.xlim(0.0001, 2000)
+    plt.ylim(min(y_number_values)-.1, 1)
     plt.xscale("log")
     # Set the x, y axis tick marks text size.
     plt.tick_params(axis='both', labelsize=9)
-
+    #SaveThePlot
+    plt.savefig(plotName+"_Accuracy_val"+".PNG")
     # Display the plot in the matplotlib's viewer.
     plt.show()
 
@@ -154,18 +155,19 @@ for c in [0.001, 0.01, 0.1, 1, 10, 100, 1000]:
     # Prepare the "subtitle"
     # subtitle="Prediction accuracy for the validation dataset with k="+str(n_neighbors)
     acc = metrics.accuracy_score(y_val, pred_test)
-    subtitle = '\nAccuracy=' + '{:.2%}'.format(acc)
 
-    plt.xlabel(subtitle, fontsize=12)
+
+    plt.xlabel("X1", fontsize=12)
+    plt.ylabel("X2", fontsize=12)
     if (c == 0.001):
         ACCs = [c, acc]
     else:
         ACCs = np.vstack([ACCs, [c, acc]])
+    plt.savefig("SVM_linear_C"+str(c)+".png")
     plt.show()
 
 if __name__ == '__main__':
-    draw_line()
-
+    draw_line("SVM-linear")
 bestC = ACCs[np.argmax(ACCs[:, 1])][0]  # C that produce max accuracy
 print("The best value for C is " + '{:.3}'.format(bestC))
 pred_test = clf.predict(X_test)
@@ -220,7 +222,7 @@ for c in [0.001, 0.01, 0.1, 1, 10, 100, 1000]:
     plt.show()
 
 if __name__ == '__main__':
-    draw_line()
+    draw_line("SVM-rbf")
 
 bestC = ACCs[np.argmax(ACCs[:, 1])][0]  # C that produce max accuracy
 print("The best value for C is " + '{:.3}'.format(bestC))

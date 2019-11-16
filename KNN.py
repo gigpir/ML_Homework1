@@ -119,12 +119,13 @@ clf.fit(X_train, y_train)
 # Create color maps
 cmap_light = ListedColormap(['#FFAAAA', '#AAFFAA', '#AAAAFF'])
 cmap_bold = ListedColormap(['#FF0000', '#00FF00', '#0000FF'])
-    
+#NORMALIZE TEST SET ACCORDING TO THE PREVIOUS SCALER based on Train+Val set
+X_test = scaler.transform(X_test)
 # Plot the decision boundary. For that, we will assign a color to each
 # point in the mesh [x_min, x_max]x[y_min, y_max].
 h = .02  # step size in the mesh
-x_min, x_max = X_train[:, 0].min() - 1, X_train[:, 0].max() + 1
-y_min, y_max = X_train[:, 1].min() - 1, X_train[:, 1].max() + 1
+x_min, x_max = X_test[:, 0].min() - 1, X_test[:, 0].max() + 1
+y_min, y_max = X_test[:, 1].min() - 1, X_test[:, 1].max() + 1
 xx, yy = np.meshgrid(np.arange(x_min, x_max, h),np.arange(y_min, y_max, h))
 Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
 
@@ -132,8 +133,7 @@ Z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
 Z = Z.reshape(xx.shape)
 plt.figure()
 plt.pcolormesh(xx, yy, Z, cmap=cmap_light)
-#NORMALIZE TEST SET ACCORDING TO THE PREVIOUS SCALER based on Train+Val set
-X_test = scaler.transform(X_test)
+
 # Plot also the test points
 plt.scatter(X_test[:, 0], X_test[:, 1], c=y_test, cmap=cmap_bold,edgecolor='k', s=20)
 plt.xlim(xx.min(), xx.max())
